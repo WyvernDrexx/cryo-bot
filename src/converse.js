@@ -6,10 +6,10 @@ const converse = (messageObj) => {
     messageObj.delete();
     return;
   }
-  console.log(messageObj.mentions.users.keys().length)
+  console.log(messageContent)
 
   if(messageContent === "hi"){
-    
+    messageObj.reply("Hello");
   }
 
   if (
