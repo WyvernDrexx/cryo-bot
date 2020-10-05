@@ -3,10 +3,10 @@ const config = require("./config.json");
 const handleCommands = require("./src/handleCommands");
 const converse = require("./src/converse");
 const client = new Discord.Client();
-const prefix = "!";
+const prefix = "c/";
 
 const isCommand = (message = "") => {
-  if (message.startsWith(prefix)) return true;
+  if (message.toLowerCase().startsWith(prefix)) return true;
   return false;
 };
 
