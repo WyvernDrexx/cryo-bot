@@ -37,21 +37,16 @@ module.exports = class ShowColorDetails extends Command {
       const colorHex = this.getFullLengthHex(selectedColor.hex);
       const exampleEmbed = new MessageEmbed()
         .setColor(colorHex)
-        .setTitle(selectedColor.name)
+        .setTitle(`${selectedColor.name}`)
         .addFields(
-          { name: "HEX", value: colorHex },
-          { name: "\u200B", value: "\u200B" },
+          { name: "HEX", value: `\`${colorHex}\`` },
           {
-            name: "Inline field title",
-            value: "Some value here",
-            inline: true,
+            name: "RGB",
+            value: `\`${selectedColor.rgb}\``,
           },
-          { name: "Inline field title", value: "Some value here", inline: true }
         )
-        .addField("Inline field title", "Some value here", true)
-        .setImage("https://i.imgur.com/wSTFkRM.png")
         .setTimestamp()
-        .setFooter("Some footer text here", "https://i.imgur.com/wSTFkRM.png");
+        .setFooter("Cryo Bot");
 
       return message.embed(exampleEmbed);
     }
