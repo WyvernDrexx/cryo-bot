@@ -1,26 +1,25 @@
-const Discord = require("discord.js");
 const config = require("./config.json");
-const handleCommands = require("./src/handleCommands");
-const converse = require("./src/converse");
-const client = new Discord.Client();
-const prefix = "c/";
+const commandPrefix = "c/";
 
-const isCommand = (message = "") => {
-  if (message.toLowerCase().startsWith(prefix)) return true;
-  return false;
-};
+const { CommandoClient } = require("discord.js-commando");
+const path = require("path");
 
-client.on("message", (messageObj) => {
-  if (messageObj.author.bot) return;
-
-  if (isCommand(messageObj.content.trim())) {
-    const args = messageObj.content.slice(prefix.length).split(" ");
-    const command = args.shift().toLowerCase();
-    handleCommands(messageObj, command, args);
-    return;
-  }
-
-  converse(messageObj);
+const client = new CommandoClient({
+  commandPrefix,
+  owner: "743462790190334073",
 });
 
+client.registry
+  .registerDefaultTypes()
+  .registerGroups([["first", "Default commands"]])
+  .registerDefaultGroups()
+  .registerDefaultCommands()
+  .registerCommandsIn(path.join(__dirname, "commands"));
+
+client.once("ready", () => {
+  console.log(`Logged in as ${client.user.tag}! (${client.user.id})`);
+  client.user.setActivity("with Commando");
+});
+
+client.on("error", console.error);
 client.login(config.BOT_TOKEN);
