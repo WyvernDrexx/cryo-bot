@@ -1,6 +1,7 @@
 const { Command } = require("discord.js-commando");
 const { MessageEmbed } = require("discord.js");
-const colorNames = require("../resources/colorNames.json");
+const colors = require("../resources/colors.json");
+const convert = require("color-convert");
 
 module.exports = class ShowColorDetails extends Command {
   constructor(client) {
@@ -31,26 +32,74 @@ module.exports = class ShowColorDetails extends Command {
     return hex;
   }
 
-  run(message, { color }) {
-    const selectedColor = colorNames[color];
-    if (selectedColor) {
-      const colorHex = this.getFullLengthHex(selectedColor.hex);
-      const exampleEmbed = new MessageEmbed()
-        .setColor(colorHex)
-        .setTitle(`${selectedColor.name}`)
-        .addFields(
-          { name: "HEX", value: `\`${colorHex}\`` },
-          {
-            name: "RGB",
-            value: `\`${selectedColor.rgb}\``,
-          },
-        )
-        .setTimestamp()
-        .setFooter("Cryo Bot");
+  createColorNotFoundEmbed(color) {
+    return new MessageEmbed()
+      .setTitle(`${color}`)
+      .setDescription("*Sorry, color doesn't exist*")
+      .setTimestamp()
+      .setFooter("Cryo Bot");
+  }
 
-      return message.embed(exampleEmbed);
+  createColorEmbed(color) {
+    const colorHex = this.getFullLengthHex(color.hex);
+    return new MessageEmbed()
+      .setColor(colorHex)
+      .setTitle(`${color.name}`)
+      .addFields(
+        { name: "HEX", value: `\`#${colorHex}\``, inline: true },
+        {
+          name: "RGB",
+          value: `\`${color.rgb}\``,
+          inline: true,
+        },
+        {
+          name: "HSL",
+          value: `\`${convert.hex.hsl(colorHex)}\``,
+          inline: true,
+        },
+        {
+          name: "HSV",
+          value: `\`${convert.hex.hsv(colorHex)}\``,
+          inline: true,
+        },
+        {
+          name: "HWB",
+          value: `\`${convert.hex.hwb(colorHex)}\``,
+          inline: true,
+        }
+      )
+      .addFields(
+        {
+          name: "CMYK",
+          value: `\`${convert.hex.cmyk(colorHex)}\``,
+          inline: true,
+        },
+        {
+          name: "ANSI16",
+          value: `\`${convert.hex.ansi16(colorHex)}\``,
+          inline: true,
+        },
+        {
+          name: "ANSI256",
+          value: `\`${convert.hex.ansi256(colorHex)}\``,
+          inline: true,
+        },
+        {
+          name: "CSS Keyword",
+          value: `\`${convert.hex.keyword(colorHex)}\``,
+          inline: true,
+        }
+      )
+      .setTimestamp()
+      .setFooter("Cryo Bot");
+  }
+
+  run(message, { color }) {
+    const selectedColor = colors[color];
+    if (selectedColor) {
+      const embedMessage = this.createColorEmbed(selectedColor);
+      return message.embed(embedMessage);
     }
-    
-    return message.say("Color Not Found!");
+    return message.embed(this.createColorNotFoundEmbed(color));
   }
 };
